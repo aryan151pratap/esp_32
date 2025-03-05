@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 // Listen on dynamic port or fallback to 8080 for WebSocket
-const wss = new WebSocket.Server({ port: process.env.PORT || 8080 });
+const wss = new WebSocket.Server({ port: process.env.PORT });
 
 let cmd = "";
 let data = null;
@@ -94,7 +94,7 @@ app.post('/send-command', (req, res) => {
     }, 100);
 });
 
-// Listen on dynamic port
-app.listen(process.env.PORT || 3000, () => {
-    console.log('Server running on port', process.env.PORT || 3000);
+// Listen on dynamic port provided by Render
+app.listen(process.env.PORT, () => {
+    console.log('Server running on port', process.env.PORT);
 });
