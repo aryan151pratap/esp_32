@@ -11,7 +11,7 @@ function App() {
   const [memoryVisible, setMemoryVisible] = useState(false);
   const [text, setText] = useState([]);
   const [active_File, seTactive_File] = useState(null);
-  const [serverUrl, setServerUrl] = useState("http://192.168.244.50:3000");
+  const [serverUrl, setServerUrl] = useState("https://esp-32-igyl.onrender.com");
 
   
   const handle_memory_icon = (value) => {

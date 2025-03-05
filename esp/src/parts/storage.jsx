@@ -5,7 +5,7 @@ import axios from 'axios';
 const StorageAndRamInfo = ({serverUrl}) => {
   const [storage, setStorage] = useState({ total: 4, used: 1, free: 2 });
   const [ram, setRam] = useState({ total: 1, used: 2, free: 5 });
-  // const [serverUrl, setServerUrl] = useState("http://192.168.244.50:3000/storage");
+  // const [serverUrl, setServerUrl] = useState("https://esp-32-igyl.onrender.com/storage");
 
 
   const fetchStorage = () => {
