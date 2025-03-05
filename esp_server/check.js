@@ -4,12 +4,14 @@ const cors = require('cors');
 const bodyParser = require("body-parser");
 const WebSocket = require("ws");
 
+const port = process.env.PORT || 4000; // Single port for both HTTP and WebSocket
+
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// Listen on dynamic port or fallback to 8080 for WebSocket
-const wss = new WebSocket.Server({ port: process.env.PORT });
+// WebSocket server using the same port as HTTP
+const wss = new WebSocket.Server({ noServer: true }); // "noServer" allows WebSocket server to be attached to the same port
 
 let cmd = "";
 let data = null;
@@ -17,7 +19,7 @@ let folder = null;
 let storage = null;
 
 app.get('/', (req, res) => {
-    res.json({ message: 'server connected ....' });
+    res.json({ message: 'Server connected ....' });
 });
 
 app.get("/folder", function(req, res){
@@ -43,8 +45,6 @@ app.get("/command", function(req, res) {
     cmd = null;
 });
 
-let output = null;
-
 function broadcast(data) {
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
@@ -55,9 +55,7 @@ function broadcast(data) {
 
 app.post("/send-output", function(req, res) {
     const output = req.body.output;
-
     broadcast({ output });
-
     res.json({ status: "Received" });
 });
 
@@ -72,7 +70,7 @@ app.post("/send-success", function(req, res) {
 
 app.post('/send-command', (req, res) => {
     const { command } = req.body;
-    console.log("send to esp32: ", command);
+    console.log("Send to ESP32: ", command);
     cmd = command;
     data = null;
 
@@ -94,7 +92,14 @@ app.post('/send-command', (req, res) => {
     }, 100);
 });
 
-// Listen on dynamic port provided by Render
-app.listen(process.env.PORT, () => {
-    console.log('Server running on port', process.env.PORT);
+// Start HTTP server
+const server = app.listen(port, () => {
+    console.log(`HTTP Server running on port ${port}`);
+});
+
+// Handle WebSocket connections on the same port
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+    });
 });
