@@ -5,7 +5,7 @@ const OutputDisplay = ({give_scroll}) => {
 	give_scroll(output);
 
     useEffect(() => {
-        const ws = new WebSocket("https://esp-32-igyl.onrender.com:8080"); 
+        const ws = new WebSocket("https://esp-32-igyl.onrender.com"); 
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
